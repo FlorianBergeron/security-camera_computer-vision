@@ -18,7 +18,7 @@ while True:
     # Display this image on the screen
     cv2.imshow(" Capturing", frame)
 
-    # If "q" key is pressed, the app is shutdown
+    # Wait until key button is pressed
     key = cv2.waitKey(1) & 0xFF
     
     # Press ESCAPE to stop app (ASCII code decimal = 27)

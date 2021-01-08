@@ -36,13 +36,14 @@ while True:
     if not _:
         print("[X] - Failed to take photo")
         break
-    # Display total number of photos taken (but appears on screenshot...)
+    # TODO: Display total number of photos taken (but appears on screenshot...)
     # cv2.putText(frame, 
     #             "Photos: {}".format(nb_img), (5, 30), 
     #             cv2.FONT_HERSHEY_PLAIN, 2, 
     #             (255, 255, 0), 2)
     cv2.imshow(" Capturing {} => SPACEBAR".format(str(name)), frame)
 
+    # Wait until key button is pressed
     key = cv2.waitKey(1) & 0xFF
     
     # Press ESCAPE to stop app (ASCII code decimal = 27)
