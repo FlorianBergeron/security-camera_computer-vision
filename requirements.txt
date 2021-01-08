@@ -1,0 +1,14 @@
+tensorflow-gpu
+numpy==1.19.3
+pandas
+matplotlib
+seaborn
+tqdm
+cmake
+opencv-python
+opencv-contrib-python
+dlib
+sklearn
+imutils
+kaggle
+face_recognition
