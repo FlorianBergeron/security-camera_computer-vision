@@ -7,18 +7,17 @@ MODELS_DIR = WORKSPACE + "models/"
 
 nb_img = 0
 photoTook = 0
-
 tips = False
 record = False
-
 frameWidth = 640
 frameHeight = 480
-
 cascade = MODELS_DIR + "haarcascade_frontalface_alt2.xml"
 
+# Create folder with dataset's name given by user
 name = str(input("\n[?] - What is your dataset's name?\n > "))
 filename = DATA_DIR + name
 
+# Create folder if they dosn't exist yet
 try:
     os.mkdir(DATA_DIR)
 except:
@@ -44,13 +43,12 @@ camera.set(4, frameHeight)
 while True:
     faceDetected = False
 
-    
-
     # Read each image of the video (frame per frame)
     _, frame = camera.read()
 
+    # Check if python can get frame from camera
     if not _:
-        print("[X] - Failed to take photo")
+        print("[X] - Failed to read frame from camera!")
         break
 
     # Create a Cascade classifier object
@@ -67,10 +65,11 @@ while True:
         frame = cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         faceDetected = True
         # print("Face detected!")
-    cv2.putText(frame, 
-                "Faces: {}".format(str(len(faces))), (5, 30), 
-                cv2.FONT_HERSHEY_PLAIN, 2, 
-                (255, 0, 0), 2)
+    # TODO: Deprecated?
+    # cv2.putText(frame, 
+    #             "Faces: {}".format(str(len(faces))), (5, 30), 
+    #             cv2.FONT_HERSHEY_PLAIN, 2, 
+    #             (255, 0, 0), 2)
 
     # COMMANDS HUD
     cv2.rectangle(frame, (0, 0), (frameWidth, 30), (100, 100, 100), cv2.FILLED)
@@ -88,7 +87,7 @@ while True:
                     cv2.FONT_HERSHEY_PLAIN, 2, 
                     (0, 255, 0), 2)
 
-        if record == True:
+        if record:
             cv2.circle(frame, (frameWidth - 20, 15), 5, (0, 0, 255), 8)
             cv2.imwrite(filename + "/image_{}.png".format(nb_img), frame[y:y+h, x:x+w])
             nb_img += 1
@@ -96,19 +95,20 @@ while True:
 
     # Help HUD
     if tips:
-        cv2.rectangle(frame, (275, 325), (50, 50), (100, 100, 100), cv2.FILLED)
-        cv2.rectangle(frame, (275, 325), (50, 50), (0, 0, 0), 1)
+        cv2.rectangle(frame, (275, 350), (50, 50), (100, 100, 100), cv2.FILLED)
+        cv2.rectangle(frame, (275, 350), (50, 50), (0, 0, 0), 1)
         cv2.putText(frame, "[F] Force photo.", (60, 75), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
-        cv2.putText(frame, "Take photo in diff. pos:", (60, 125), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
-        cv2.putText(frame, " - Up / Down.", (60, 150), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
-        cv2.putText(frame, " - Left / Right.", (60, 175), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
-        cv2.putText(frame, " - Front.", (60, 200), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
-        cv2.putText(frame, " - Glasses / or not.", (60, 225), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
-        cv2.putText(frame, " - Eyes open / closed.", (60, 250), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
-        cv2.putText(frame, " - A bit of rotation.", (60, 275), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
-        cv2.putText(frame, " - ...", (60, 300), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
+        cv2.putText(frame, "[H] Close help.", (60, 100), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
+        cv2.putText(frame, "Take photo in diff. pos:", (60, 150), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
+        cv2.putText(frame, " - Up / Down.", (60, 175), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
+        cv2.putText(frame, " - Left / Right.", (60, 200), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
+        cv2.putText(frame, " - Front.", (60, 225), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
+        cv2.putText(frame, " - Glasses / or not.", (60, 250), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
+        cv2.putText(frame, " - Eyes open / closed.", (60, 275), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
+        cv2.putText(frame, " - A bit of rotation.", (60, 300), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
+        cv2.putText(frame, " - ...", (60, 325), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
 
-    # Display this image on the screen
+    # Display frame in openCV window
     cv2.imshow(" Capturing - {}".format(str(name)), frame)
 
     # Wait until key button is pressed
@@ -120,20 +120,19 @@ while True:
         print("[!] - Stop capturing!", "\n")
         break
 
-    # Space bar to take photos (until button is pressed)
+    # Press SPACEBAR to take photos (press button again to stop taking photo)
+    # Take 1 photo per frame per seconds (~ 60 photos / second if you have a good PC)
     if key == 32:
         record=not record
     
-    # TODO
-    # Force taking photo even face is not detected
+    # Press F to force taking photo even face is not detected
     if key == ord("f"):
-        if not tips:
+        if not tips: # We don't force taking photo if help are displayed on screen
             cv2.imwrite(filename + "/image_{}.png".format(nb_img), frame[y:y+h, x:x+w])
             nb_img += 1
             photoTook += 1
 
-    # TODO
-    # Display shortcut (help)
+    # Display shortcuts (help)
     if key == ord("h"):
         tips=not tips
 
