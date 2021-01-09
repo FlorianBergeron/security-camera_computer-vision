@@ -15,7 +15,7 @@ label_ids = {}
 x_train = []
 y_labels = []
 modelName = "custom_LBFHFaceRecognizer_model.yml"
-dataModelName = "custom_LBFHFaceRecognizer_model.pickle"
+dataModelName = "data_custom_LBFHFaceRecognizer_model.pickle"
 
 # Create folder if they don't exist yet
 try:
