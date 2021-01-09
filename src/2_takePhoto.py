@@ -43,7 +43,7 @@ while True:
     #             "Photos: {}".format(nb_img), (5, 30), 
     #             cv2.FONT_HERSHEY_PLAIN, 2, 
     #             (255, 255, 0), 2)
-    cv2.imshow(" Capturing {} => SPACEBAR".format(str(name)), frame)
+    cv2.imshow(" Capturing {} press SPACEBAR / Press ESC to quit".format(str(name)), frame)
 
     # Wait until key button is pressed
     key = cv2.waitKey(1) & 0xFF

@@ -17,7 +17,7 @@ while True:
     _, frame = camera.read()
 
     # Display this image on the screen
-    cv2.imshow(" Capturing", frame)
+    cv2.imshow(" Capturing - Press ESC to quit", frame)
 
     # Wait until key button is pressed
     key = cv2.waitKey(1) & 0xFF
