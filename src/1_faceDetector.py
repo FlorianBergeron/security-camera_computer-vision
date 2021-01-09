@@ -1,11 +1,14 @@
 import cv2
 
+# Directory paths
 WORKSPACE = "../"
 MODELS_DIR = WORKSPACE + "models/"
+HAARSCASCADE_MODELS_DIR = MODELS_DIR + "haarscascade/"
 
+# Variables
 frameWidth = 640
 frameHeight = 480
-cascade = MODELS_DIR + "haarcascade_frontalface_alt2.xml"
+cascade = HAARSCASCADE_MODELS_DIR + "haarcascade_frontalface_alt2.xml"
 
 print("\n[!] - Start capturing...")
 

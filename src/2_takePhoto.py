@@ -1,9 +1,11 @@
 import os
 import cv2
 
+# Directory paths
 WORKSPACE = "../"
 DATA_DIR = WORKSPACE + "dataset/"
 
+# Variables
 nb_img = 0
 frameWidth = 640
 frameHeight = 480
