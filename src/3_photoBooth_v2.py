@@ -14,6 +14,7 @@ tips = False
 record = False
 frameWidth = 640
 frameHeight = 480
+nb_frameBeforeNextPhoto = 5
 cascade = HAARSCASCADE_MODELS_DIR + "haarcascade_frontalface_alt2.xml"
 
 # Create folder with dataset's name given by user
@@ -113,6 +114,9 @@ while True:
 
     # Display frame in openCV window
     cv2.imshow(" Capturing - {}".format(str(name)), frame)
+
+    for i in range(nb_frameBeforeNextPhoto):
+        _, frame = camera.read()
 
     # Wait until key button is pressed
     key = cv2.waitKey(1) & 0xFF
