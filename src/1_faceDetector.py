@@ -29,7 +29,7 @@ while True:
     _, frame = camera.read()
 
     if not _:
-        print("[X] - Failed to take photo")
+        print("[X] - Failed to read frame from camera!")
         break
 
     # Create a Cascade classifier object

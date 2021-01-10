@@ -70,11 +70,6 @@ while True:
         frame = cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         faceDetected = True
         # print("Face detected!")
-    # TODO: Deprecated?
-    # cv2.putText(frame, 
-    #             "Faces: {}".format(str(len(faces))), (5, 30), 
-    #             cv2.FONT_HERSHEY_PLAIN, 2, 
-    #             (255, 0, 0), 2)
 
     # COMMANDS HUD
     cv2.rectangle(frame, (0, 0), (frameWidth, 30), (100, 100, 100), cv2.FILLED)

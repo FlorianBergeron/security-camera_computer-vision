@@ -45,7 +45,7 @@ for root, dirs, files in os.walk(DATA_DIR):
             if not label in label_ids:
                 label_ids[label] = current_id
                 current_id += 1
-            id_ = label_ids[label]
+            user_id = label_ids[label]
 
             # Resize image to get better accuracy during training & test
             image = cv2.resize(cv2.imread(path, cv2.IMREAD_GRAYSCALE), (70, 70))
@@ -57,7 +57,7 @@ for root, dirs, files in os.walk(DATA_DIR):
                 print(" > [!] - Excluded image: \"" + str(path) + "\" with sharpness index: " + str(sharpness_index))
             else:
                 x_train.append(image)
-                y_labels.append(id_)
+                y_labels.append(user_id)
 
 with open(MODELS_DATA_DIR + dataModelName, "wb") as f:
     pickle.dump(label_ids, f)
