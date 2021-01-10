@@ -40,25 +40,24 @@ for root, dirs, files in os.walk(DATA_DIR):
         label = root.split("/")[-1]
 
         for file in files:
-            # if file.endswith("jpg"):
-                path = os.path.join(root, file)
-        
-                if not label in label_ids:
-                    label_ids[label] = current_id
-                    current_id += 1
-                id_ = label_ids[label]
+            path = os.path.join(root, file)
 
-                # Resize image to get better accuracy during training & test
-                image = cv2.resize(cv2.imread(path, cv2.IMREAD_GRAYSCALE), (70, 70))
+            if not label in label_ids:
+                label_ids[label] = current_id
+                current_id += 1
+            id_ = label_ids[label]
 
-                # Check if image is superior to a blurry threshold with Laplacian mathematic formula
-                sharpness_index = cv2.Laplacian(image, cv2.CV_64F).var()
+            # Resize image to get better accuracy during training & test
+            image = cv2.resize(cv2.imread(path, cv2.IMREAD_GRAYSCALE), (70, 70))
 
-                if sharpness_index < 150:
-                    print(" > [!] - Excluded image: \"" + str(path) + "\" with sharpness index: " + str(sharpness_index))
-                else:
-                    x_train.append(image)
-                    y_labels.append(id_)
+            # Check if image is superior to a blurry threshold with Laplacian mathematic formula
+            sharpness_index = cv2.Laplacian(image, cv2.CV_64F).var()
+
+            if sharpness_index < 150:
+                print(" > [!] - Excluded image: \"" + str(path) + "\" with sharpness index: " + str(sharpness_index))
+            else:
+                x_train.append(image)
+                y_labels.append(id_)
 
 with open(MODELS_DATA_DIR + dataModelName, "wb") as f:
     pickle.dump(label_ids, f)
