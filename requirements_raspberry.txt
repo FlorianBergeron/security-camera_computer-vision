@@ -1,0 +1,7 @@
+numpy==1.19.3
+pandas
+matplotlib
+cmake
+opencv-python
+imutils
+face_recognition
