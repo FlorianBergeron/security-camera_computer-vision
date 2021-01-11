@@ -21,6 +21,7 @@ threshold_confidence_index = 100
 
 intrusion = False
 sendAlert = False
+alreadySend = False
 nb_intrusion = 0
 nb_intrusion_total = 0
 
@@ -97,9 +98,15 @@ while True:
         nb_intrusion += 1
     
     if nb_intrusion > 9:
-        cv2.putText(frame, "SEND ALERT!", (150, 250), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 2)
+        cv2.putText(frame, "SEND ALERT!", (150, 250), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 3)
         nb_intrusion = 0
+        sendAlert = True
+    
+    if sendAlert and not alreadySend:
         # TODO => Envoyer un sms & mail.
+        alreadySend = True
+        print("SENT!")
+        # TODO => Add timer to reseat alreadySend.
 
     cv2.imshow(" Identifying...", frame)
 
