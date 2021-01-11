@@ -17,6 +17,12 @@ frameHeight = 480
 userColorGranted = (0, 255, 0)
 userColorUnknown = (0, 0, 255)
 userColorInfo = (255, 255, 255)
+threshold_confidence_index = 100
+
+intrusion = False
+sendAlert = False
+nb_intrusion = 0
+nb_intrusion_total = 0
 
 cascade = HAARSCASCADE_MODELS_DIR + "haarcascade_frontalface_alt2.xml"
 detectorModel = cv2.CascadeClassifier(cascade)
@@ -35,6 +41,8 @@ camera.set(3, frameWidth)
 camera.set(4, frameHeight)
 
 while True:
+    intrusion = False
+
     _, frame = camera.read()
 
     # Check if python can get frame from camera
@@ -57,14 +65,16 @@ while True:
         user_id, confidence_index = recognizer.predict(gray_frame_resized)
 
         # If confidence index prediction is less than 100
-        if confidence_index < 100:
+        if confidence_index < threshold_confidence_index:
              color = userColorGranted
              name = labels[user_id]
 
         else:
             color = userColorUnknown
             name = "Unknown"
-            # TODO => Envoyer un sms & mail.
+            print("Nb intrusion: {}".format(str(nb_intrusion)))
+            nb_intrusion_total += 1
+            intrusion = True
 
         label = name + " " + '{:5.2f}'.format(confidence_index)
         cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_DUPLEX, 1, userColorInfo, 1, cv2.LINE_AA)
@@ -80,12 +90,23 @@ while True:
     cv2.putText(frame, "{}".format(str(len(faces))), (180, 22), cv2.FONT_HERSHEY_PLAIN, 1.25, (0, 0, 255), 0)
     cv2.putText(frame, "FPS:", (frameWidth - 110, 20), cv2.FONT_HERSHEY_PLAIN, 1, userColorInfo, 1)
     cv2.putText(frame, "{:05.2f}".format(fps), (frameWidth - 70, 20), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1)
+    # cv2.putText(frame, "Unknown: {}".format(str(nb_intrusion)), (300, 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
+
+    if intrusion:
+        cv2.putText(frame, "INTRUSION DETECTED!", (250, 20), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 2)
+        nb_intrusion += 1
+    
+    if nb_intrusion > 9:
+        cv2.putText(frame, "SEND ALERT!", (150, 250), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 2)
+        nb_intrusion = 0
+        # TODO => Envoyer un sms & mail.
 
     cv2.imshow(" Identifying...", frame)
 
     key = cv2.waitKey(1) & 0xFF
 
     if key == 27:
+        print("Nb total intrusion (frames): {}".format(str(nb_intrusion_total)))
         print("\n[X] - Stop identifiyng!", "\n")
         break
 
