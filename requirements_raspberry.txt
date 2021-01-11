@@ -3,5 +3,6 @@ pandas
 matplotlib
 cmake
 opencv-python
+opencv-contrib-python
 imutils
 face_recognition
