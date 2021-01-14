@@ -1,15 +1,36 @@
 import cv2
 import pickle
 import numpy as np
+from datetime import date, timedelta, datetime
+
+from notification.MailNotification import *
+from notification.SmsNotification import *
 
 # import 4_trainLBPHFaceRecognizer
-
 WORKSPACE = "../"
 DATA_DIR = WORKSPACE + "dataset/"
 MODELS_DIR = WORKSPACE + "models/"
 LBFH_MODELS_DIR = WORKSPACE + "models/LBFH/"
 MODELS_DATA_DIR = LBFH_MODELS_DIR + "data/"
 HAARSCASCADE_MODELS_DIR = MODELS_DIR + "haarscascade/"
+
+# Notification
+# Mail
+sender_address = 'esgifyc1@gmail.com'
+sender_pass = 'fycesgi123'
+subject = 'Alert intrusion.'
+body = 'Un intru a été détecté ! Son visage en pièce jointe.'
+filename = 'tree.png'
+receiver_address = 'stanislas.durand.27@gmail.com'
+
+# Sms
+user_phone = "+33606811844"
+account_sid = "AC8e2ec07ba6f37c426bfbe02417a62c79"
+auth_token = "8ffc8b874082fb28fcca5b94757ada4c"
+phone_auth = "+19177460760"
+
+classMail = MailNotification(sender_address, sender_pass, receiver_address)
+classSms = SmsNotification(account_sid, auth_token, phone_auth)
 
 id_image=0
 frameWidth = 640
@@ -24,6 +45,8 @@ sendAlert = False
 alreadySend = False
 nb_intrusion = 0
 nb_intrusion_total = 0
+
+dtNow = datetime.now() - timedelta(days=1)
 
 cascade = HAARSCASCADE_MODELS_DIR + "haarcascade_frontalface_alt2.xml"
 detectorModel = cv2.CascadeClassifier(cascade)
@@ -73,7 +96,7 @@ while True:
         else:
             color = userColorUnknown
             name = "Unknown"
-            print("Nb intrusion: {}".format(str(nb_intrusion)))
+            # print("Nb intrusion: {}".format(str(nb_intrusion)))
             nb_intrusion_total += 1
             intrusion = True
 
@@ -91,7 +114,6 @@ while True:
     cv2.putText(frame, "{}".format(str(len(faces))), (180, 22), cv2.FONT_HERSHEY_PLAIN, 1.25, (0, 0, 255), 0)
     cv2.putText(frame, "FPS:", (frameWidth - 110, 20), cv2.FONT_HERSHEY_PLAIN, 1, userColorInfo, 1)
     cv2.putText(frame, "{:05.2f}".format(fps), (frameWidth - 70, 20), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1)
-    # cv2.putText(frame, "Unknown: {}".format(str(nb_intrusion)), (300, 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
 
     if intrusion:
         cv2.putText(frame, "INTRUSION DETECTED!", (250, 20), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 2)
@@ -101,15 +123,17 @@ while True:
         cv2.putText(frame, "SEND ALERT!", (150, 250), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 3)
         nb_intrusion = 0
         sendAlert = True
-    
-    if sendAlert and not alreadySend:
-        # TODO => Envoyer un sms & mail.
-        alreadySend = True
+
+    if sendAlert and (datetime.now()-dtNow).total_seconds() > 120:
+        classMail.send_mail(subject, body, filename)
+        dtNow = datetime.now()
+        alreadySend = True  
+        sendAlert = False 
+        if  account_sid is not None and auth_token is not None :
+            classSms.sendSms(body, user_phone)
         print("SENT!")
-        # TODO => Add timer to reseat alreadySend.
 
     cv2.imshow(" Identifying...", frame)
-
     key = cv2.waitKey(1) & 0xFF
 
     if key == 27:

@@ -2,6 +2,7 @@ import os
 import cv2
 import pickle
 import numpy as np
+from face_recognition import *
 
 # Directory paths
 WORKSPACE = "../"
