@@ -1,5 +1,5 @@
 # Path
-WORKSPACE = "../"
+WORKSPACE = ""
 DATA_DIR = WORKSPACE + "dataset/"
 MODELS_DIR = WORKSPACE + "models/"
 LBFH_MODELS_DIR = WORKSPACE + "models/LBFH/"
