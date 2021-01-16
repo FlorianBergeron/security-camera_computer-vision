@@ -1,28 +1,13 @@
 import os
 import cv2
 
-# Directory paths
-WORKSPACE = "../"
-DATA_DIR = WORKSPACE + "dataset/"
-MODELS_DIR = WORKSPACE + "models/"
-HAARSCASCADE_MODELS_DIR = MODELS_DIR + "haarscascade/"
+from variables.global_variables import *
 
-# Variables
-nb_img = 0
-photoTook = 0
-tips = False
-record = False
-frameWidth = 640
-frameHeight = 480
-spaceBetweenFrame = False
-nb_frameBeforeNextPhoto = 5
-cascade = HAARSCASCADE_MODELS_DIR + "haarcascade_frontalface_alt2.xml"
+# Create folder if they dosn't exist yet
 
-# Create folder with dataset's name given by user
 name = str(input("\n[?] - What is your dataset's name?\n > "))
 filename = DATA_DIR + name
 
-# Create folder if they dosn't exist yet
 try:
     os.mkdir(DATA_DIR)
 except:

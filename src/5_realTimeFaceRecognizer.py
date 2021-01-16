@@ -3,43 +3,18 @@ import pickle
 import numpy as np
 from datetime import date, timedelta, datetime
 
+from variables.config import *
+from variables.global_variables import *
+
 from notification.MailNotification import *
 from notification.SmsNotification import *
 
-# import 4_trainLBPHFaceRecognizer
-WORKSPACE = "../"
-DATA_DIR = WORKSPACE + "dataset/"
-MODELS_DIR = WORKSPACE + "models/"
-LBFH_MODELS_DIR = WORKSPACE + "models/LBFH/"
-MODELS_DATA_DIR = LBFH_MODELS_DIR + "data/"
-HAARSCASCADE_MODELS_DIR = MODELS_DIR + "haarscascade/"
-
-# Notification
-# Mail
-sender_address = 'esgifyc1@gmail.com'
-sender_pass = 'fycesgi123'
-subject = 'Alert intrusion.'
-body = 'Un intru a été détecté ! Son visage en pièce jointe.'
-filename = 'tree.png'
-receiver_address = 'stanislas.durand.27@gmail.com'
-
-# Sms
-user_phone = "+33606811844"
-account_sid = "AC8e2ec07ba6f37c426bfbe02417a62c79"
-auth_token = "8ffc8b874082fb28fcca5b94757ada4c"
-phone_auth = "+19177460760"
-
 classMail = MailNotification(sender_address, sender_pass, receiver_address)
-classSms = SmsNotification(account_sid, auth_token, phone_auth)
+classSms = None
+if account_sid is not None and auth_token is not None and phone_auth is not None:
+    classSms = SmsNotification(account_sid, auth_token, phone_auth)
 
-id_image=0
-frameWidth = 640
-frameHeight = 480
-userColorGranted = (0, 255, 0)
-userColorUnknown = (0, 0, 255)
-userColorInfo = (255, 255, 255)
-threshold_confidence_index = 100
-
+# variables 
 intrusion = False
 sendAlert = False
 alreadySend = False
@@ -124,12 +99,12 @@ while True:
         nb_intrusion = 0
         sendAlert = True
 
-    if sendAlert and (datetime.now()-dtNow).total_seconds() > 120:
+    if sendAlert and (datetime.now()-dtNow).total_seconds() > notification_timer_seconds:
         classMail.send_mail(subject, body, filename)
         dtNow = datetime.now()
         alreadySend = True  
         sendAlert = False 
-        if  account_sid is not None and auth_token is not None :
+        if  classSms is not None :
             classSms.sendSms(body, user_phone)
         print("SENT!")
 

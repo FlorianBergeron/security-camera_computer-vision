@@ -3,20 +3,13 @@ import cv2
 import pickle
 import numpy as np
 from face_recognition import *
-
-# Directory paths
-WORKSPACE = "../"
-DATA_DIR = WORKSPACE + "dataset/"
-LBFH_MODELS_DIR = WORKSPACE + "models/LBFH/"
-MODELS_DATA_DIR = LBFH_MODELS_DIR + "data/"
+from variables.global_variables import *
 
 # Variables
 current_id = 0
 label_ids = {}
 x_train = []
 y_labels = []
-modelName = "custom_LBFHFaceRecognizer_model.yml"
-dataModelName = "data_custom_LBFHFaceRecognizer_model.pickle"
 
 # Create folder if they don't exist yet
 try:
