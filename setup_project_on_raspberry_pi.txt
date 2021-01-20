@@ -12,6 +12,7 @@ sudo apt-get install build-essential cmake pkg-config -y
 sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng-dev -y
 sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev -y
 sudo apt-get install libxvidcore-dev libx264-dev -y
+sudo apt-get install libatlas-base-dev -y
 
 # Install OpenCV dependencies
 sudo apt-get install libfontconfig1-dev libcairo2-dev -y
@@ -40,7 +41,7 @@ source .fyc/bin/activate
 pip install -r requirements_raspi.txt
 
 # Install PiCamera (Raspi's camera)
-pip install picamera
+pip install "picamera[array]"
 
 # Install OpenCV
 pip install opencv-python
