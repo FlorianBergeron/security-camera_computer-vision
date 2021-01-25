@@ -1,0 +1,11 @@
+numpy==1.19.3
+pandas
+matplotlib
+cmake
+opencv-python
+opencv-contrib-python
+sklearn
+imutils
+kaggle
+tensorflow-gpu
+face_recognition
