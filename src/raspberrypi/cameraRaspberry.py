@@ -20,8 +20,8 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 	# Display this image on the screen
 	cv2.imshow(" Capturing - Press ESC to quit", frame)
 
-    # Wait until key button is pressed
-    key = cv2.waitKey(1) & 0xFF
+	# Wait until key button is pressed
+	key = cv2.waitKey(1) & 0xFF
 
 	# Clear stream in preparation for the next frame
 	rawCapture.truncate(0)
