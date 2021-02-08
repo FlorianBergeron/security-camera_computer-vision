@@ -9,3 +9,4 @@ imutils
 kaggle
 tensorflow-gpu
 face_recognition
+twilio
