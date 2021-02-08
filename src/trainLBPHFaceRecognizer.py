@@ -6,7 +6,6 @@ from face_recognition import *
 from src.variables.global_variables import *
 
 
-
 def trainModel():
     # Variables
     current_id = 0
@@ -75,3 +74,4 @@ def trainModel():
     print(" > [+] - Save custom LBFH model in\"" + LBFH_MODELS_DIR + modelName + "\"")
 
     print("\n[!] - DONE!\n")
+    
