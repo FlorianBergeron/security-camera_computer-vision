@@ -1,7 +1,7 @@
 import sys
 from src.raspberrypi.recordUserDataset import *
-from src.trainLBPHFaceRecognizer import *
-from src.realTimeFaceRecognizer import *
+from src.raspberrypi.trainLBPHFaceRecognizer_raspberry import *
+from src.raspberrypi.realTimeFaceRecognizer import *
 
 
 def userActionChoiceRaspberry():
