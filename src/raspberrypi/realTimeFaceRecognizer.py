@@ -10,7 +10,7 @@ from src.notification.MailNotification import *
 from src.notification.SmsNotification import *
 
 
-def realTimeRecognizer():
+def realTimeRecognizer_raspberry():
     classMail = MailNotification(sender_address, sender_pass, receiver_address)
     classSms = None
 
@@ -41,83 +41,91 @@ def realTimeRecognizer():
 
     camera.set(3, frameWidth)
     camera.set(4, frameHeight)
+    
+    # Initialize the camera and grab a reference to the raw camera capture
+    camera = PiCamera()
+    camera.resolution = (frameWidth, frameHeight)
+    camera.framerate = 32
+    rawCapture = PiRGBArray(camera, size=(frameWidth, frameHeight))
 
-    while True:
-        intrusion = False
+    # Allow the camera to warmup
+    time.sleep(0.1)
+    
+    # Main loop app
+    for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 
-        _, frame = camera.read()
+        # Main loop app where image will be displayed in a window
+        while True:
+            intrusion = False
 
-        # Check if python can get frame from camera
-        if not _:
-            print("[X] - Failed to read frame from camera!")
-            break
+            frame = camera.read()
 
-        # Start tick counter for calculating FPS (Frame per Second)
-        tickmark = cv2.getTickCount()
+            # Start tick counter for calculating FPS (Frame per Second)
+            tickmark = cv2.getTickCount()
 
-        # Convert initial image in gray (better result)
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            # Convert initial image in gray (better result)
+            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        # Search the coordinate of the face in image
-        faces = detectorModel.detectMultiScale(gray_frame, scaleFactor = 1.2, minNeighbors = 7, minSize = (70, 70))
+            # Search the coordinate of the face in image
+            faces = detectorModel.detectMultiScale(gray_frame, scaleFactor = 1.2, minNeighbors = 7, minSize = (70, 70))
 
-        # Draw a red rectangle on recognized face
-        for x, y, w, h in faces:
-            gray_frame_resized = cv2.resize(gray_frame[y:y + h, x:x + w], (70, 70))
-            user_id, confidence_index = recognizer.predict(gray_frame_resized)
+            # Draw a red rectangle on recognized face
+            for x, y, w, h in faces:
+                gray_frame_resized = cv2.resize(gray_frame[y:y + h, x:x + w], (70, 70))
+                user_id, confidence_index = recognizer.predict(gray_frame_resized)
 
-            # If confidence index prediction is less than 100
-            if confidence_index < threshold_confidence_index:
-                color = userColorGranted
-                name = labels[user_id]
+                # If confidence index prediction is less than 100
+                if confidence_index < threshold_confidence_index:
+                    color = userColorGranted
+                    name = labels[user_id]
 
-            else:
-                color = userColorUnknown
-                name = "Unknown"
-                # print("Nb intrusion: {}".format(str(nb_intrusion)))
-                nb_intrusion_total += 1
-                intrusion = True
+                else:
+                    color = userColorUnknown
+                    name = "Unknown"
+                    # print("Nb intrusion: {}".format(str(nb_intrusion)))
+                    nb_intrusion_total += 1
+                    intrusion = True
 
-            label = name + " " + '{:5.2f}'.format(confidence_index)
-            cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_DUPLEX, 1, userColorInfo, 1, cv2.LINE_AA)
-            cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+                label = name + " " + '{:5.2f}'.format(confidence_index)
+                cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_DUPLEX, 1, userColorInfo, 1, cv2.LINE_AA)
+                cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
 
-        # Calculate number of Frame Per Second (FPS), 1 frame = 1 image on screen
-        fps = cv2.getTickFrequency() / (cv2.getTickCount() - tickmark)
-        
-        # COMMANDS HUD
-        cv2.rectangle(frame, (0, 0), (frameWidth, 30), (100, 100, 100), cv2.FILLED)
-        cv2.putText(frame, "[ESC] Quit", (10, 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
-        cv2.putText(frame, "Face(s):", (110, 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
-        cv2.putText(frame, "{}".format(str(len(faces))), (180, 22), cv2.FONT_HERSHEY_PLAIN, 1.25, (0, 0, 255), 0)
-        cv2.putText(frame, "FPS:", (frameWidth - 110, 20), cv2.FONT_HERSHEY_PLAIN, 1, userColorInfo, 1)
-        cv2.putText(frame, "{:05.2f}".format(fps), (frameWidth - 70, 20), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1)
+            # Calculate number of Frame Per Second (FPS), 1 frame = 1 image on screen
+            fps = cv2.getTickFrequency() / (cv2.getTickCount() - tickmark)
 
-        if intrusion:
-            cv2.putText(frame, "INTRUSION DETECTED!", (250, 20), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 2)
-            nb_intrusion += 1
-        
-        if nb_intrusion > 9:
-            cv2.putText(frame, "SEND ALERT!", (150, 250), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 3)
-            nb_intrusion = 0
-            sendAlert = True
+            # COMMANDS HUD
+            cv2.rectangle(frame, (0, 0), (frameWidth, 30), (100, 100, 100), cv2.FILLED)
+            cv2.putText(frame, "[ESC] Quit", (10, 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
+            cv2.putText(frame, "Face(s):", (110, 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 0)
+            cv2.putText(frame, "{}".format(str(len(faces))), (180, 22), cv2.FONT_HERSHEY_PLAIN, 1.25, (0, 0, 255), 0)
+            cv2.putText(frame, "FPS:", (frameWidth - 110, 20), cv2.FONT_HERSHEY_PLAIN, 1, userColorInfo, 1)
+            cv2.putText(frame, "{:05.2f}".format(fps), (frameWidth - 70, 20), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1)
 
-        if sendAlert and (datetime.now()-dtNow).total_seconds() > notification_timer_seconds:
-            classMail.send_mail(subject, body, filename)
-            dtNow = datetime.now()
-            alreadySend = True  
-            sendAlert = False 
-            if  classSms is not None :
-                classSms.sendSms(body, user_phone)
-            print("SENT!")
+            if intrusion:
+                cv2.putText(frame, "INTRUSION DETECTED!", (250, 20), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 2)
+                nb_intrusion += 1
 
-        cv2.imshow(" Identifying...", frame)
-        key = cv2.waitKey(1) & 0xFF
+            if nb_intrusion > 9:
+                cv2.putText(frame, "SEND ALERT!", (150, 250), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 3)
+                nb_intrusion = 0
+                sendAlert = True
 
-        if key == 27:
-            print("Nb total intrusion (frames): {}".format(str(nb_intrusion_total)))
-            print("\n[X] - Stop identifiyng!", "\n")
-            break
+            if sendAlert and (datetime.now()-dtNow).total_seconds() > notification_timer_seconds:
+                classMail.send_mail(subject, body, filename)
+                dtNow = datetime.now()
+                alreadySend = True  
+                sendAlert = False 
+                if  classSms is not None :
+                    classSms.sendSms(body, user_phone)
+                print("SENT!")
 
-    camera.release()
-    cv2.destroyAllWindows()
+            cv2.imshow(" Identifying...", frame)
+            key = cv2.waitKey(1) & 0xFF
+
+            if key == 27:
+                print("Nb total intrusion (frames): {}".format(str(nb_intrusion_total)))
+                print("\n[X] - Stop identifiyng!", "\n")
+                break
+
+        camera.release()
+        cv2.destroyAllWindows()
