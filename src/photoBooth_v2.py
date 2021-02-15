@@ -1,7 +1,7 @@
 import os
 import cv2
-
 from src.variables.global_variables import *
+
 
 def photoBooth():
     # Create folder with dataset's name given by user
@@ -134,9 +134,6 @@ def photoBooth():
         # Display shortcuts (help)
         if key == ord("h"):
             tips=not tips
-
-        # TODO
-        # Faire la détection du profile gauche et droit.
 
     # Release camera to other software
     camera.release()
