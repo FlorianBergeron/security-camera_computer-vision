@@ -1,5 +1,5 @@
 # Path
-WORKSPACE = ""
+WORKSPACE = "./"
 DATA_DIR = WORKSPACE + "dataset/"
 MODELS_DIR = WORKSPACE + "models/"
 LBFH_MODELS_DIR = WORKSPACE + "models/LBFH/"
@@ -16,8 +16,6 @@ frameHeight = 480
 spaceBetweenFrame = False
 nb_frameBeforeNextPhoto = 5
 cascade = HAARSCASCADE_MODELS_DIR + "haarcascade_frontalface_alt2.xml"
-
-# Create folder with dataset's name given by user
 
 # Models
 modelName = "custom_LBFHFaceRecognizer_model.yml"

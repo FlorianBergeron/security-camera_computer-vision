@@ -1,6 +1,7 @@
 import cv2
 import pickle
 import numpy as np
+import os
 from datetime import date, timedelta, datetime
 
 from src.variables.config import *
@@ -11,18 +12,28 @@ from src.notification.SmsNotification import *
 
 
 def realTimeRecognizer():
+    create_directory(path_intrusion_picture)
     classMail = MailNotification(sender_address, sender_pass, receiver_address)
     classSms = None
 
+    current_path = os.getcwd() 
+
     if account_sid is not None and auth_token is not None and phone_auth is not None:
         classSms = SmsNotification(account_sid, auth_token, phone_auth)
-
+    
+    if not os.path.exists(path_intrusion_picture):
+        os.makedirs(path_intrusion_picture)
+    
+    intrusion_picture_list = os.listdir(path_intrusion_picture) # dir is your directory path
+    
     # variables 
     intrusion = False
     sendAlert = False
     alreadySend = False
     nb_intrusion = 0
     nb_intrusion_total = 0
+
+    number_files = 0
 
     dtNow = datetime.now() - timedelta(days=1)
 
@@ -37,15 +48,19 @@ def realTimeRecognizer():
         labels = {v:k for k, v in data.items()}
 
     print("[!] - Start capturing...")
+    
     camera = cv2.VideoCapture(0)
 
     camera.set(3, frameWidth)
     camera.set(4, frameHeight)
-
+    
+    
     while True:
         intrusion = False
 
         _, frame = camera.read()
+
+
 
         # Check if python can get frame from camera
         if not _:
@@ -103,13 +118,18 @@ def realTimeRecognizer():
             sendAlert = True
 
         if sendAlert and (datetime.now()-dtNow).total_seconds() > notification_timer_seconds:
-            classMail.send_mail(subject, body, filename)
+            intrusion_file_count = len(intrusion_picture_list)
+            filename_attachement = "intrusion_" + str(intrusion_file_count + 1) + ".png"
+            cv2.imwrite(os.path.join(path_intrusion_picture, filename_attachement), frame)
+            classMail.send_mail(subject, body, current_path + "\intrusion\\" + filename_attachement)
             dtNow = datetime.now()
             alreadySend = True  
             sendAlert = False 
             if  classSms is not None :
                 classSms.sendSms(body, user_phone)
             print("SENT!")
+            
+            number_files += 1
 
         cv2.imshow(" Identifying...", frame)
         key = cv2.waitKey(1) & 0xFF
@@ -121,3 +141,11 @@ def realTimeRecognizer():
 
     camera.release()
     cv2.destroyAllWindows()
+
+def create_directory(path):
+    try:
+        os.mkdir(path)
+    except OSError:
+        print ("Creation of the directory %s failed" % path)
+    else:
+        print("ok")
