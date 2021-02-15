@@ -48,9 +48,6 @@ def photoBooth_raspberry():
         while True:
             faceDetected = False
 
-            # Read each frame of the video (frame per frame) in numpy array
-            # frame = np.float32(frame)
-
             # Create a Cascade classifier object
             detectorModel = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_alt2.xml")
 
