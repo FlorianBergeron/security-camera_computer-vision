@@ -7,6 +7,8 @@ body = 'Un intru a été détecté ! Son visage en pièce jointe.'
 filename = './src/tree.jpg'
 receiver_address = 'stanislas.durand.27@gmail.com'
 
+path_intrusion_picture = "./intrusion"
+
 # Sms
 user_phone = "+33606811844"
 account_sid = None

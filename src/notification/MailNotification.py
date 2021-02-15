@@ -1,23 +1,25 @@
 
 # Import email
 import smtplib
+import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
+from pathlib import Path
 
 
 # Send Email :
 class MailNotification:
-    def __init__(self, from_gmail, mdp_gmail, user_mail):
+    def __init__(self, from_gmail, mdp_gmail, to_mail):
         self.from_gmail = from_gmail
         self.mdp_gmail = mdp_gmail
-        self.user_mail = user_mail
+        self.to_mail = to_mail
 
     def init_mail(self, subject_mail, body_mail):
         msg = MIMEMultipart()
         msg['From'] = self.from_gmail
-        msg['To'] = self.user_mail
+        msg['To'] = self.to_mail
         msg['Subject'] = subject_mail
         msg.attach(MIMEText(body_mail, 'plain'))
         return msg
@@ -32,10 +34,11 @@ class MailNotification:
 
     def send_mail(self, subject_mail, body_mail, file_path):
         msg = self.init_mail(subject_mail, body_mail)
-        msg.attach(self.init_attachement(file_path))
+        if file_path != None:
+            msg.attach(self.init_attachement(file_path))
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
         server.login(self.from_gmail, self.mdp_gmail)
         text = msg.as_string()
-        server.sendmail(self.from_gmail, self.user_mail, text)
+        server.sendmail(self.from_gmail, self.to_mail, text)
         server.quit()
